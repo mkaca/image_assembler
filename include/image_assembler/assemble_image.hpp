@@ -10,11 +10,7 @@
  *
  * @copyright Copyright (c) 2023
  *
- * Software License Agreement (BSD License)
- *
- *  Author: Michael Kaca
- *  Copyright (c) 2023
- *  All rights reserved.
+ *  Software License Agreement (BSD License)
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
@@ -58,54 +54,70 @@
 namespace image_assembler
 {
 
-constexpr int DEFAULT_BOUND = 10000000;
-class AssembleImage
-{
-public:
-  AssembleImage();
+  class AssembleImage
+  {
+  public:
+    AssembleImage();
 
-  /**
-   * @brief Publishes the assembled image(s)
-   */
-  void loop();
+    /**
+     * @brief Publishes the assembled image(s)
+     */
+    void loop();
 
-private:
-  ros::Publisher image_rgb_pub_;
-  ros::Publisher image_depth_pub_;
-  ros::Subscriber cloud_sub_;
+  private:
+    ros::Publisher image_rgb_pub_;
+    ros::Publisher image_depth_pub_;
+    ros::Subscriber cloud_sub_;
 
-  bool cloud_ready_;
-  ros::Time latest_acc_complete_time_;
+    bool cloud_ready_;
+    ros::Time latest_acc_complete_time_;
 
-  sensor_msgs::Image acc_rgb_image_;
-  std::vector<image_assembler::PointDataXYDI> acc_2d_points_;
-  double min_x_, min_y_, max_x_, max_y_;
-  unsigned int min_intensity_, max_intensity_;
+    sensor_msgs::Image acc_rgb_image_;
+    sensor_msgs::PointCloud2 latest_cloud_;
+    std::vector<image_assembler::PointDataXYDI> acc_2d_points_;
+    double min_x_, min_y_, max_x_, max_y_;
+    unsigned int min_intensity_, max_intensity_;
 
-  sensor_msgs::PointCloud2 latest_cloud_;
+    // params
+    double accumulate_time_;
+    double focal_point_;
+    int image_width_, image_height_;
+    int loop_rate_;
+    std::string save_rgb_image_path_;
 
-  double accumulate_time_;
-  double focal_point_;
-  int image_width_, image_height_;
-  int loop_rate_;
-  std::string save_rgb_image_path_;
+    /**
+     * @brief Callback for the input cloud
+     */
+    void cloudCB(const sensor_msgs::PointCloud2::ConstPtr &msg);
 
-  /**
-   * @brief
-   */
-  void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& msg);
+    /**
+     * @brief Accumulates the point cloud data into XYDI points, while updating the bounds for future discretization
+     */
+    void accumulateImage();
 
-  double getMaxIntensity(const sensor_msgs::PointCloud2& msg);
+    /**
+     * @brief Resets the bounds and accumulated data
+     */
+    void reset();
 
-  void accumulateImage();
+    /**
+     * @brief Constructs the depth and rgb images based on the accumulated data
+     *
+     * @param rgb_image RGB Image returned by reference
+     * @param depth_image Depth image returned by reference
+     */
+    void analyzeAccumulatedPoints(cv::Mat &rgb_image, cv::Mat &depth_image);
 
-  void reset();
+    /**
+     * @brief Converts continuous values to discrete values
+     * @param val Input value (continuous)
+     * @param step desired step size
+     * @param min_bound min discretized value
+     * @return int Resultant discretized value
+     */
+    int continuousToDiscrete(double val, double step, double min_bound);
+  };
 
-  void analyzeAccumulatedPoints(cv::Mat& rgb_image, cv::Mat& depth_image);
+} // namespace image_assembler
 
-  int continuousToDiscrete(double val, double step, double min_bound);
-};
-
-}  // namespace image_assembler
-
-#endif  // IMAGE_ASSEMBLER_IMAGE_ASSEMBLER_HPP_
+#endif // IMAGE_ASSEMBLER_IMAGE_ASSEMBLER_HPP_

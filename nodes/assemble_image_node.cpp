@@ -1,9 +1,7 @@
 /*********************************************************************
- * Software License Agreement (BSD License)
+ * Author: Michael Kaca
  *
- *  Author: Michael Kaca
- *  Copyright (c) 2023
- *  All rights reserved.
+ * Software License Agreement (BSD License)
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
@@ -35,8 +33,7 @@
 
 #include "image_assembler/assemble_image.hpp"
 
-// todo: rename
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   ros::init(argc, argv, "assemble_image");
   image_assembler::AssembleImage ai;

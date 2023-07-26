@@ -7,14 +7,21 @@
   <!-- Run actual leg tracker -->
   <node name="assemble_image" pkg="image_assembler" type="assemble_image">
     <remap from="cloud" to="livox/lidar"/>
+
+    <!-- Uncomment for remapping -->
     <!-- <remap from="rgb_image" to="converted_rgb_image"/> -->
     <!-- <remap from="depth_image" to="converted_depth_image"/> -->
 
     <!-- Note: this is also the period (1/frequency) of the image outputs -->
     <param name="accumulate_time" value="5.0" type="double"/>
+
+    <!-- Desired image dimensions for both RGB and depth -->
     <param name="image_width" value="700" type="int"/>
     <param name="image_height" value="480" type="int"/>
-    <param name="focal point" value="1" type="double"/>
+
+
+    <param name="focal_point" value="1" type="double"/>
+
     <!-- This is the sampling rate - it should be at least 2x the rate of the lidar -->
     <param name="loop_rate" value="20" type="int"/>
     <!-- Optional save path for debugging to view the RGB image -->
@@ -22,7 +29,7 @@
 
   </node>
 
-  <!-- <node name="rviz" type="rviz" pkg="rviz" args="-d $(find image_assembler)/rviz/test.rviz" /> -->
+  <node name="rviz" type="rviz" pkg="rviz" args="-d $(find image_assembler)/rviz/test.rviz" />
 
 
 </launch>

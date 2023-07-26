@@ -7,6 +7,11 @@ routines with checkerboards, contour finding, and image detection. Note that by
 scaling down a 3D point cloud into a 2D image, the computation time required by
 the downstream algorithms is significantly decreased. The output of this program
 are an RGB image and a depth image. Example of an output can be seen below:
+
+**Important Note**: The livox swaps the coordinate frames: standard camera z
+axis == livox x axis. When using different lidars, ensure that the correct axes
+are used within the code for the camera projection.
+
 ![image](output_example.png)
 
 ## Original Intent

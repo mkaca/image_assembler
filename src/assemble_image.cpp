@@ -228,24 +228,25 @@ namespace image_assembler
 
     for (const pcl::PointXYZI &point_3d : cloud->points)
     {
+      // Note: When using non livox lidars with standard coordinate frames, use normal coordinates and a value of 1 for the flip scalar
+      const int flip_scalar = -1;
+      // Note: Modify the values below to satisfy your lidar's coordinate frame
+      float camera_x = point_3d.y;
+      float camera_y = point_3d.z;
+      float camera_z = point_3d.x;
+
       // ignore bad data
-      // todo: change y to z... post good transform
-      if (std::isnan(point_3d.x) || std::isnan(point_3d.y) || std::isnan(point_3d.z) || point_3d.x <= 0.0)
+      if (std::isnan(camera_x) || std::isnan(camera_y) || std::isnan(camera_z) || camera_z <= 0.0)
       {
         continue;
       }
 
       image_assembler::PointDataXYDI new_point;
-      new_point.x = 1000 * focal_point_ * -1 * point_3d.y / point_3d.x; // x' = f*x/z
-      new_point.y = 1000 * focal_point_ * -1 * point_3d.z / point_3d.x; // y' = f*y/z
-      new_point.depth = point_3d.x;
+      new_point.x = 1000 * focal_point_ * flip_scalar * camera_x / camera_z; // x' = f*x/z
+      new_point.y = 1000 * focal_point_ * flip_scalar * camera_y / camera_z; // y' = f*y/z
+      new_point.depth = camera_z;
       new_point.intensity = point_3d.intensity;
       acc_2d_points_.push_back(new_point);
-
-      if (point_3d.x < 0)
-      {
-        ROS_WARN_NAMED("assemble_image", "Negative depth data found!");
-      }
 
       // update spatial bounds for discretizing later; once all 2d points are done being accumulated, discretize using the
       // bounds and the desired image dimensions

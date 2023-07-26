@@ -1,5 +1,8 @@
 # Image Assembler
 
+![ROS](https://img.shields.io/badge/ROS-Melodic-brightgreen.svg)
+![ROS](https://img.shields.io/badge/ROS-Noetic-brightgreen.svg)
+
 This implements a tool for converting 3D XYZI point cloud data to an RGB
 (actually grayscale) image. This RGB image can then be used to run computer
 vision algorithms. This includes but is not limited to running calibration
